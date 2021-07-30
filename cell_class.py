@@ -10,24 +10,30 @@ class Cell:
         self.CELL_SIZE = 20
         self.image = pygame.Surface((self.CELL_SIZE, self.CELL_SIZE))
         self.rect = self.image.get_rect()
+        self.neighbors = []
+        self.alive_neighbors = 0
+
         self.color = {'BLACK' : (0, 0, 0)
                     , 'WHITE' : (255, 255, 255)
                 }
-        self.neighbors = []
-
 
     def update(self):
         self.rect.topleft = (self.grid_x * self.CELL_SIZE, self.grid_y * self.CELL_SIZE)
+        for cell in self.neighbors:
+            if cell.alive:
+                self.alive_neighbors += 1
+                
     
-
     def draw(self):
-        self.image.fill(self.color['BLACK'])
+        if self.alive:
+            self.image.fill(self.color['BLACK'])
         if not self.alive:
+            self.image.fill(self.color['BLACK'])
+
             # Reference about our image window of our border
             # (pixel, pixel, size, size)
             border = (1, 1, 18, 18)
             pygame.draw.rect(self.image, self.color['WHITE'], border)
-        
         self.window.blit(self.image, (self.grid_x * self.CELL_SIZE, self.grid_y * self.CELL_SIZE))
     
 
@@ -63,10 +69,10 @@ class Cell:
                 neighbor[0] += 30
             if neighbor[1] < 0:
                 neighbor[1] += 30
-            if neighbor[0] > 29:
-                neighbor[0] -= 30
             if neighbor[1] > 29:
                 neighbor[1] -= 30
+            if neighbor[0] > 29:
+                neighbor[0] -= 30
         
         for neighbor in neighbors_list:
             try:
