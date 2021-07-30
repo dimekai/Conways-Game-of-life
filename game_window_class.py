@@ -16,9 +16,10 @@ class GameWindow:
         self.cols = self.height//self.CELL_SIZE
         # Set up all cells in our grid in a random way
         self.grid = [[Cell(self.image, x, y) for x in range(self.cols)] for y in range(self.rows)]
+        for row in self.grid:
+            for cell in row:
+                cell.get_neighbors(self.grid)
         self.color = {'DARK_GRAY' : (102, 102, 102)}
-        
-        self.__populate_neighbors()
 
     def update(self):
         self.rect.topleft = self.pos
@@ -29,14 +30,10 @@ class GameWindow:
 
     def draw(self):
         self.image.fill(self.color['DARK_GRAY'])
-
         for row in self.grid:
             for cell in row:
                 cell.draw()
 
         self.window.blit(self.image, (self.pos.x, self.pos.y))
-
-    def __populate_neighbors(self):
-        for row in self.grid:
-            for cell in row:
-                cell.get_neighbors(self.grid)
+    
+        
