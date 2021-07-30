@@ -1,14 +1,14 @@
 import pygame
 import sys
-from game_window_class import *
 
+from game_window_class import *
+from button_class import *
 
 WIDTH, HEIGHT = 800, 800
 CELL_SIZE = 20
 BACKGROUND = (199, 199, 199)
 FPS = 60
 
-running = True
 
 def get_events():
     global running
@@ -23,10 +23,14 @@ def get_events():
 
 def update():
     game_window.update()
+    for button in buttons:
+        button.update(mouse_position)
 
 
 def draw():
     window.fill(BACKGROUND)
+    for button in buttons:
+        button.draw()
     game_window.draw()
         
 
@@ -59,18 +63,32 @@ def click_cell(mouse_position):
     # cell = game_window.grid[grid_y][grid_x]
     if game_window.grid[grid_y][grid_x].alive:
         game_window.grid[grid_y][grid_x].alive = False
-    else:
+    else: 
         game_window.grid[grid_y][grid_x].alive = True
     
     
+def make_buttons():
+    buttons = []
+    buttons.append(Button(window, WIDTH//2 - 50, 50, 100, 30
+                , text='RUN'
+                , colour=(28, 111, 51)
+                , hover_colour=(48, 131, 81)
+                , bold_text=True
+            )
+        )
+    return buttons
+
 
 pygame.init()
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 x, y = 100, 180
 game_window = GameWindow(window, x, y)
+buttons = make_buttons()
 
+running = True
 while running:
+    mouse_position = pygame.mouse.get_pos()
     get_events()
     update()
     draw()
