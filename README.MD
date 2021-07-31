@@ -2,7 +2,7 @@
 
 A game where your role is to be a spectator.
 
-The cellular automaton shows its state through a flat mesh (in this case finite) formed by squares called cells. 
+The cellular automaton shows its state through a grid (in this case finite) formed by squares called cells. 
 Each cell has 8 neighbors, and each cell has two states: alive or dead. From there the state evolves in a sort of shifts according to 2 rules.
 
 1. A dead cell with exactly three living neighbor cells is "born" (the next turn it will be alive).
