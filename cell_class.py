@@ -19,11 +19,7 @@ class Cell:
 
     def update(self):
         self.rect.topleft = (self.grid_x * self.CELL_SIZE, self.grid_y * self.CELL_SIZE)
-        for cell in self.neighbors:
-            if cell.alive:
-                self.alive_neighbors += 1
-                
-    
+
     def draw(self):
         if self.alive:
             self.image.fill(self.color['BLACK'])
@@ -80,6 +76,16 @@ class Cell:
                 self.neighbors.append(grid[pos_y][pos_x])
             except:
                 print(f'Neighbor: {neighbor}')
+    
+    
+    def count_live_neighbors(self):
+        ''' Count how many neighbors are alive around of the current cell '''
+        count = 0
+        for neighbor in self.neighbors:
+            if neighbor.alive:
+                count += 1
+        
+        self.alive_neighbors = count
 
 
 
