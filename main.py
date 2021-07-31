@@ -9,7 +9,7 @@ CELL_SIZE = 20
 BACKGROUND = (199, 199, 199)
 FPS = 60
 
-
+# ---------------SETTING FUNCTIONS------------------
 def get_events():
     global running
     for event in pygame.event.get():
@@ -19,12 +19,15 @@ def get_events():
             mouse_position = pygame.mouse.get_pos()
             if is_mouse_on_grid(mouse_position):
                 click_cell(mouse_position)
+            else:
+                for button in buttons:
+                    button.click()
 
 
 def update():
     game_window.update()
     for button in buttons:
-        button.update(mouse_position)
+        button.update(mouse_position, game_state=state)
 
 
 def draw():
@@ -34,6 +37,64 @@ def draw():
     game_window.draw()
         
 
+# ------------------RUNNING FUNCTIONS-------------------
+def running_get_events():
+    global running
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_position = pygame.mouse.get_pos()
+            if is_mouse_on_grid(mouse_position):
+                click_cell(mouse_position)
+            else:
+                for button in buttons:
+                    button.click()
+
+
+def running_update():
+    game_window.update()
+    for button in buttons:
+        button.update(mouse_position, game_state=state)
+    if frame_count%(FPS//10) == 0:
+        game_window.evaluate()
+
+
+def running_draw():
+    window.fill(BACKGROUND)
+    for button in buttons:
+        button.draw()
+    game_window.draw()
+
+
+# --------------------PAUSE FUNCTIONS---------------
+def pause_get_events():
+    global running
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_position = pygame.mouse.get_pos()
+            if is_mouse_on_grid(mouse_position):
+                click_cell(mouse_position)
+            else:
+                for button in buttons:
+                    button.click()
+
+
+def pause_update():
+    game_window.update()
+    for button in buttons:
+        button.update(mouse_position, game_state=state)
+
+
+def pause_draw():
+    window.fill(BACKGROUND)
+    for button in buttons:
+        button.draw()
+    game_window.draw()
+
+    
 def is_mouse_on_grid(mouse_position):
     is_on_grid = False
     pos_x = mouse_position[0]
@@ -65,8 +126,24 @@ def click_cell(mouse_position):
         game_window.grid[grid_y][grid_x].alive = False
     else: 
         game_window.grid[grid_y][grid_x].alive = True
-    
-    
+
+
+def run_game():
+    global state
+    state = 'running'
+
+
+def pause_game():
+    global state
+    state = 'pause'
+
+
+def reset_game():
+    global state
+    state = 'setting'
+    game_window.reset_grid()
+
+
 def make_buttons():
     buttons = []
     buttons.append(Button(window, WIDTH//2 - 50, 50, 100, 30
@@ -74,6 +151,35 @@ def make_buttons():
                 , colour=(28, 111, 51)
                 , hover_colour=(48, 131, 81)
                 , bold_text=True
+                , function=run_game
+                , state='setting'
+            )
+        )
+    buttons.append(Button(window, WIDTH//2 - 50, 50, 100, 30
+                , text='PAUSE'
+                , colour=(18, 104, 135)
+                , hover_colour=(51, 168, 212)
+                , bold_text=True
+                , function=pause_game
+                , state='running'
+            )
+        )
+    buttons.append(Button(window, WIDTH//4 - 50, 50, 100, 30
+                , text='RESET'
+                , colour=(117, 14, 14)
+                , hover_colour=(217, 54, 11)
+                , bold_text=True
+                , function=reset_game
+                , state='pause'
+            )
+        )
+    buttons.append(Button(window, WIDTH//1.25 - 50, 50, 100, 30
+                , text='RESUME'
+                , colour=(28, 111, 51)
+                , hover_colour=(48, 131, 81)
+                , bold_text=True
+                , function=run_game
+                , state='pause'
             )
         )
     return buttons
@@ -85,15 +191,30 @@ clock = pygame.time.Clock()
 x, y = 100, 180
 game_window = GameWindow(window, x, y)
 buttons = make_buttons()
+state = 'setting'
+frame_count = 0
 
 running = True
 while running:
+    # Increasing frames to visualize better
+    frame_count += 1
     mouse_position = pygame.mouse.get_pos()
-    get_events()
-    update()
-    draw()
+    if state == 'setting':
+        get_events()
+        update()
+        draw()
+    if state == 'running':
+        running_get_events()
+        running_update()
+        running_draw()
+    if state == 'pause':
+        pause_get_events()
+        pause_update()
+        pause_draw()
+    
     pygame.display.update()
     clock.tick(FPS)
+    #print(state)
 
 pygame.quit()
 sys.exit()
