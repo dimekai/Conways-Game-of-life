@@ -14,7 +14,7 @@ A relatively simple, complex and beautiful game.♥️
 
 <img align="center" src="img/Image%20homepage.png" width="500"/>
 
-## How does it works?
+## How does it work?
 **Rules**: Each square has neighbors and rules that come with number of "live" neighbors.
 1. Live cell with __fewer__ than two live neighbors, then __dead cell__ caused by **loneliness**.
 2. Live cell with __more__ than three live neighbors, then __dead cell__ caused by **overpopulation**.
